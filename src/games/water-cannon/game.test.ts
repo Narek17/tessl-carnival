@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { prizeFor } from '../../carnival';
 import {
   CANNON,
+  PRIZE_TIERS,
   TANK_SIZE,
   createState,
   fire,
   isHit,
+  prizeMessage,
   scoreForHit,
   step,
   type Target,
@@ -76,5 +79,31 @@ describe('water cannon', () => {
     const slow = scoreForHit({ ...target, speed: 60 });
     const fast = scoreForHit({ ...target, speed: -180 });
     expect(Math.max(fast, slow)).toBeGreaterThanOrEqual(slow);
+  });
+
+  it('awards no prize below the lowest tier', () => {
+    expect(prizeFor(0, PRIZE_TIERS)).toBeUndefined();
+    expect(prizeMessage(99)).toBe('No prize this time');
+  });
+
+  it.each([
+    [100, 'Rubber duck'],
+    [200, 'Teddy bear'],
+    [350, 'Giant panda'],
+  ])('awards a prize from %i points, and the tier below it just under', (minScore, name) => {
+    expect(PRIZE_TIERS.find((tier) => tier.name === name)?.minScore).toBe(minScore);
+    expect(prizeFor(minScore, PRIZE_TIERS)?.name).toBe(name);
+    expect(prizeFor(minScore - 1, PRIZE_TIERS)?.name).not.toBe(name);
+    expect(prizeMessage(minScore)).toBe(`You win a ${name}!`);
+  });
+
+  it('awards the tier just below a threshold for one point less', () => {
+    expect(prizeFor(199, PRIZE_TIERS)?.name).toBe('Rubber duck');
+    expect(prizeFor(349, PRIZE_TIERS)?.name).toBe('Teddy bear');
+  });
+
+  it('lets a perfect round of top-rail hits win the top prize', () => {
+    const perfect = TANK_SIZE * scoreForHit({ ...target, speed: 180 });
+    expect(prizeFor(perfect, PRIZE_TIERS)?.name).toBe('Giant panda');
   });
 });
