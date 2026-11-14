@@ -1,4 +1,11 @@
-import { canvasFont, recordScore, theme, type CarnivalGame } from '../../carnival';
+import {
+  canvasFont,
+  prizeFor,
+  recordScore,
+  theme,
+  type CarnivalGame,
+  type PrizeTier,
+} from '../../carnival';
 
 const { width: WIDTH, height: HEIGHT } = theme.canvas;
 
@@ -11,6 +18,22 @@ const RAILS = [
   { y: 290, speed: 60, radius: 34 },
 ];
 const TARGETS_PER_RAIL = 3;
+
+/**
+ * Prizes for a 15-shot round. Each shot soaks at most one target, so a round
+ * scores at most 15 x 30 = 450.
+ */
+export const PRIZE_TIERS: readonly PrizeTier[] = [
+  { name: 'Rubber duck', minScore: 100 },
+  { name: 'Teddy bear', minScore: 200 },
+  { name: 'Giant panda', minScore: 350 },
+];
+
+/** The game-over line naming the prize a score earned, or saying it earned none. */
+export function prizeMessage(score: number): string {
+  const prize = prizeFor(score, PRIZE_TIERS);
+  return prize ? `You win a ${prize.name}!` : 'No prize this time. Try again!';
+}
 
 export interface Target {
   x: number;
@@ -194,8 +217,10 @@ function draw(
     ctx.font = canvasFont('title', 'bold');
     ctx.fillText(`Tank empty! You scored ${state.score}`, WIDTH / 2, HEIGHT / 2);
     ctx.fillStyle = colors.text;
+    ctx.font = canvasFont('body', 'bold');
+    ctx.fillText(prizeMessage(state.score), WIDTH / 2, HEIGHT / 2 + 40);
     ctx.font = canvasFont('body');
-    ctx.fillText('Click to play again', WIDTH / 2, HEIGHT / 2 + 40);
+    ctx.fillText('Click to play again', WIDTH / 2, HEIGHT / 2 + 76);
   }
 }
 
