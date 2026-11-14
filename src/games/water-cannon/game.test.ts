@@ -83,7 +83,7 @@ describe('water cannon', () => {
 
   it('awards no prize below the lowest tier', () => {
     expect(prizeFor(0, PRIZE_TIERS)).toBeUndefined();
-    expect(prizeMessage(99)).toBe('No prize this time');
+    expect(prizeMessage(99)).toBe('No prize this time. Try again!');
   });
 
   it.each([

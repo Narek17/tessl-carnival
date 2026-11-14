@@ -32,7 +32,7 @@ export const PRIZE_TIERS: readonly PrizeTier[] = [
 /** The game-over line naming the prize a score earned, or saying it earned none. */
 export function prizeMessage(score: number): string {
   const prize = prizeFor(score, PRIZE_TIERS);
-  return prize ? `You win a ${prize.name}!` : 'No prize this time';
+  return prize ? `You win a ${prize.name}!` : 'No prize this time. Try again!';
 }
 
 export interface Target {

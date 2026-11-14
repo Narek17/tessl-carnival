@@ -23,7 +23,8 @@ Your final score is saved to the carnival's score board when the game ends.
 ### Prizes
 
 When the tank runs dry, the game over screen names the prize your score won, or
-says there is no prize this time. You win the best prize your score reaches:
+says `No prize this time. Try again!` when it wins none. You win the best prize
+your score reaches:
 
 | Prize       | Lowest score |
 | ----------- | ------------ |
